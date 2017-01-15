@@ -1,25 +1,21 @@
 #include "Servo.h"
 
 Servo mot[6][3];
-
 int offset[6][3];
-int md;
-bool done;
+int md; // delay between 'movements'
 
-//US
+// US definition
 const int trigPin = 15;
 const int echoPin = 14;
 
 void setup() {
   Serial.begin (9600); 
-
   //US
-  pinMode(trigPin, OUTPUT);  //Trig est une sortie
-  pinMode(echoPin, INPUT);   //Echo est le retour, en entrée
+  pinMode(trigPin, OUTPUT);  // trig is an output
+  pinMode(echoPin, INPUT);   // echo is an input
   
-  done = false;
-  //initial 2000
-  md = 200;
+  md = 200; // delay between 'movements'
+  
   mot[0][0].attach(46);
   mot[0][1].attach(4);
   mot[0][2].attach(26);
@@ -71,22 +67,26 @@ void setup() {
 }
 
 
-void loop2() {
+void loop() {
+  // check distance
   if (getUS() > 35.0f){
-    //move 'forward'
+    // move 'forward' if object not in front
+	// moveFwd() is very quick to execute once so doing it w/o interrupts or using millis() works properly
+	// few centimeters pet moveFwd() call
     moveFwd();
     delay(100);
   }
   else{
+	// default steady position
     resetPos();
     delay(100);
+	// rotate until not facin obstacle 
+	// few degrees per Rotate() call
     Rotate();
   }
 }
 
-void loop(){
-  moveFwd();
-}
+
 
 float getUS() {
   long duration;
@@ -94,17 +94,17 @@ float getUS() {
   digitalWrite(trigPin, LOW); 
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10); //Trig déclenché 10ms sur HIGH
+  delayMicroseconds(10); // trig 10ms HIGH
   digitalWrite(trigPin, LOW);
  
-  // Calcul de l'écho
+  // echo calculation
   duration = pulseIn(echoPin, HIGH);
-  // Distance proportionnelle à la durée de sortie
-  distance = duration*340/(2*10000);  //Vitesse du son théorique
+  // distance proportional to the output duration
+  distance = duration*340/(2*10000);  // sound speed
   
-  //Hors de portée
+  // out of range
   if ( distance <= 0){ 
-    Serial.println("Hors de portee");
+    Serial.println("Out of range");
   }
   else {
     Serial.print(distance);
@@ -115,6 +115,7 @@ float getUS() {
   }
 }
 
+// default steady position
 void resetPos(){
   for (int i=0; i<6; i+=2)
   {
@@ -126,32 +127,7 @@ void resetPos(){
 
 }
 
-void dir1(){
-  //full
-   for (int i=0; i<6; i+=1)
-    {
-      mot[i][0].write(60);
-    }
-   //special
-   for (int i=0; i<6; i+=2)
-    {
-      mot[i][0].write(120);
-    }
-}
-
-void dir2(){
-  //full opposite
-   for (int i=0; i<6; i+=1)
-    {
-      mot[i][0].write(120);
-    }
-   //special opposite
-   for (int i=0; i<6; i+=2)
-    {
-      mot[i][0].write(60);
-    }
-}
-
+// not used - kept for future additions
 void nicePose(){
      for (int i=1; i<6; i+=2)
   {
@@ -161,6 +137,7 @@ void nicePose(){
   }
 }
 
+// not used - kept for future additions
 void fwdPose(){
   for (int i=1; i<6; i+=2)
   {
@@ -171,20 +148,22 @@ void fwdPose(){
 }
 
 
+// rotates on itself
+// few degrees per Rotate() call
 void Rotate(){
-   Serial.write("Rotate"); // évite un obstacle, rotation sur lui même 
+   Serial.write("Rotate"); // avoids obstacle, rotates on itself 
    
    mot[0][2].write(45);
    mot[2][2].write(45);
-   mot[4][2].write(45); // patte basse 
+   mot[4][2].write(45); // leg low
    mot[0][1].write(150);
-   mot[2][1].write(150); // patte  milieu
-   mot[4][1].write(150); // 3premières pattes se lèvent FINI
+   mot[2][1].write(150); // middle leg
+   mot[4][1].write(150); // 3 first legs up and done
  
    delay(500);
    mot[0][0].write(0);
    mot[2][0].write(0);
-   mot[4][0].write(0);//rotation du buste 1  FINI
+   mot[4][0].write(0);// core rotation and done
 
    delay(500);
    
@@ -193,7 +172,7 @@ void Rotate(){
    mot[4][2].write(135);
    mot[0][1].write(30);
    mot[2][1].write(30);
-   mot[4][1].write(30);// abaissement des 3 première pattes
+   mot[4][1].write(30);// lower 3 first legs
    
    delay(500);
    mot[1][2].write(45);
@@ -201,12 +180,12 @@ void Rotate(){
    mot[5][2].write(45);
    mot[1][1].write(150);
    mot[3][1].write(150);
-   mot[5][1].write(150);// on lève les 3 pattes suivantes
+   mot[5][1].write(150);// raise 3 next legs
    
    delay(500);
    mot[1][0].write(0);
    mot[3][0].write(0);
-   mot[4][0].write(0);// 2ème rotation
+   mot[4][0].write(0);// 2nd rotation
    
    
    delay(500);
@@ -216,18 +195,18 @@ void Rotate(){
    mot[1][1].write(30);
    mot[3][1].write(30);
    mot[5][1].write(30);
-   delay(500); // on baisse les pattes 
+   delay(500); // lower legs
 
    mot[0][0].write(90);
    mot[1][0].write(90);
    mot[2][0].write(90);
    mot[3][0].write(90);
    mot[4][0].write(90);
-   mot[5][0].write(90); // rotation final fin de cycle
+   mot[5][0].write(90); // final rotation and end
 }
 
 
-//former doStuff
+// move straight forward
 void moveFwd(){
     for (int i=0; i<6; i+=2)
   {
@@ -246,12 +225,7 @@ void moveFwd(){
   delay(md);
   dir1();
   delay(md);
-//  for (int i=0; i<6; i+=2)
-//  {
-//    mot[i][0].write(90);
-//    mot[i][1].write(offset[i][1]+100);
-//    mot[i][2].write(offset[i][2]+110);
-//  }
+
   for (int i=1; i<6; i+=2)
   {
     mot[i][0].write(90);
@@ -275,11 +249,34 @@ void moveFwd(){
     mot[i][2].write(offset[i][2]+40);
   }
   delay(md);
-
-
   
 }
 
+// used in 'moveFwd' as pose - legs slight rotation
+void dir1(){
+  // full
+   for (int i=0; i<6; i+=1)
+    {
+      mot[i][0].write(60);
+    }
+   // 'special'
+   for (int i=0; i<6; i+=2)
+    {
+      mot[i][0].write(120);
+    }
+}
 
-
+// used in 'moveFwd' as pose - legs slight rotation in opposite direction relative to dir1()
+void dir2(){
+  // full opposite
+   for (int i=0; i<6; i+=1)
+    {
+      mot[i][0].write(120);
+    }
+   // 'special' opposite
+   for (int i=0; i<6; i+=2)
+    {
+      mot[i][0].write(60);
+    }
+}
 
