@@ -70,19 +70,20 @@ void setup() {
 void loop() {
   // check distance
   if (getUS() > 35.0f){
-    // move 'forward' if object not in front
-	// moveFwd() is very quick to execute once so doing it w/o interrupts or using millis() works properly
-	// few centimeters pet moveFwd() call
-    moveFwd();
-    delay(100);
+	// move 'forward' if object not in front
+	// moveFwd() is very quick to execute once so doing
+	// it w/o interrupts or using millis() works properly
+	// few centimeters per moveFwd() call
+	moveFwd();
+	delay(100);
   }
   else{
 	// default steady position
-    resetPos();
-    delay(100);
+	resetPos();
+	delay(100);
 	// rotate until not facin obstacle 
 	// few degrees per Rotate() call
-    Rotate();
+	rotate();
   }
 }
 
@@ -104,14 +105,14 @@ float getUS() {
   
   // out of range
   if ( distance <= 0){ 
-    Serial.println("Out of range");
+	Serial.println("Out of range");
   }
   else {
-    Serial.print(distance);
-    Serial.print(" cm ");
-    Serial.print(duration);
-    Serial.println(" ms");
-    return(distance);
+	Serial.print(distance);
+	Serial.print(" cm ");
+	Serial.print(duration);
+	Serial.println(" ms");
+	return(distance);
   }
 }
 
@@ -119,9 +120,9 @@ float getUS() {
 void resetPos(){
   for (int i=0; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+34);
-    mot[i][2].write(offset[i][2]+40);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+34);
+	mot[i][2].write(offset[i][2]+40);
   }
   delay(md);
 
@@ -129,11 +130,11 @@ void resetPos(){
 
 // not used - kept for future additions
 void nicePose(){
-     for (int i=1; i<6; i+=2)
+	 for (int i=1; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+100);
-    mot[i][2].write(offset[i][2]+110);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+100);
+	mot[i][2].write(offset[i][2]+110);
   }
 }
 
@@ -141,16 +142,16 @@ void nicePose(){
 void fwdPose(){
   for (int i=1; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+34);
-    mot[i][2].write(offset[i][2]+40);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+34);
+	mot[i][2].write(offset[i][2]+40);
   }
 }
 
 
 // rotates on itself
 // few degrees per Rotate() call
-void Rotate(){
+void rotate(){
    Serial.write("Rotate"); // avoids obstacle, rotates on itself 
    
    mot[0][2].write(45);
@@ -208,19 +209,19 @@ void Rotate(){
 
 // move straight forward
 void moveFwd(){
-    for (int i=0; i<6; i+=2)
+	for (int i=0; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+34);
-    mot[i][2].write(offset[i][2]+40);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+34);
+	mot[i][2].write(offset[i][2]+40);
   }
   delay(md);
 
    for (int i=1; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+100);
-    mot[i][2].write(offset[i][2]+110);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+100);
+	mot[i][2].write(offset[i][2]+110);
   }
   delay(md);
   dir1();
@@ -228,25 +229,25 @@ void moveFwd(){
 
   for (int i=1; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+34);
-    mot[i][2].write(offset[i][2]+40);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+34);
+	mot[i][2].write(offset[i][2]+40);
   }
   delay(md);
   for (int i=1; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+100);
-    mot[i][2].write(offset[i][2]+110);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+100);
+	mot[i][2].write(offset[i][2]+110);
   }
   delay(md);
   dir2();
   delay(md);
   for (int i=1; i<6; i+=2)
   {
-    mot[i][0].write(90);
-    mot[i][1].write(offset[i][1]+34);
-    mot[i][2].write(offset[i][2]+40);
+	mot[i][0].write(90);
+	mot[i][1].write(offset[i][1]+34);
+	mot[i][2].write(offset[i][2]+40);
   }
   delay(md);
   
@@ -256,27 +257,27 @@ void moveFwd(){
 void dir1(){
   // full
    for (int i=0; i<6; i+=1)
-    {
-      mot[i][0].write(60);
-    }
+	{
+	  mot[i][0].write(60);
+	}
    // 'special'
    for (int i=0; i<6; i+=2)
-    {
-      mot[i][0].write(120);
-    }
+	{
+	  mot[i][0].write(120);
+	}
 }
 
-// used in 'moveFwd' as pose - legs slight rotation in opposite direction relative to dir1()
+// used in 'moveFwd' as pose
+// legs slight rotation in opposite direction relative to dir1()
 void dir2(){
   // full opposite
    for (int i=0; i<6; i+=1)
-    {
-      mot[i][0].write(120);
-    }
+	{
+	  mot[i][0].write(120);
+	}
    // 'special' opposite
    for (int i=0; i<6; i+=2)
-    {
-      mot[i][0].write(60);
-    }
+	{
+	  mot[i][0].write(60);
+	}
 }
-
