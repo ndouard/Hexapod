@@ -2,7 +2,7 @@
 
 Servo mot[6][3];
 int offset[6][3];
-int md; // delay between 'movements'
+int md; // Delay between 'movements'
 
 // US definition
 const int trigPin = 15;
@@ -10,11 +10,11 @@ const int echoPin = 14;
 
 void setup() {
   Serial.begin (9600); 
-  //US
-  pinMode(trigPin, OUTPUT);  // trig is an output
-  pinMode(echoPin, INPUT);   // echo is an input
+  // US
+  pinMode(trigPin, OUTPUT);  // Trig is an output
+  pinMode(echoPin, INPUT);   // Echo is an input
   
-  md = 200; // delay between 'movements'
+  md = 200; // Delay between 'movements'
   
   mot[0][0].attach(46);
   mot[0][1].attach(4);
@@ -68,9 +68,9 @@ void setup() {
 
 
 void loop() {
-  // check distance
+  // Check distance
   if (getUS() > 35.0f){
-	// move 'forward' if object not in front
+	// Move 'forward' if object not in front
 	// moveFwd() is very quick to execute once so doing
 	// it w/o interrupts or using millis() works properly
 	// few centimeters per moveFwd() call
@@ -78,16 +78,14 @@ void loop() {
 	delay(100);
   }
   else{
-	// default steady position
+	// Default steady position
 	resetPos();
 	delay(100);
-	// rotate until not facin obstacle 
-	// few degrees per Rotate() call
+	// Rotate until not facin obstacle 
+	// Few degrees per Rotate() call
 	rotate();
   }
 }
-
-
 
 float getUS() {
   long duration;
@@ -98,12 +96,12 @@ float getUS() {
   delayMicroseconds(10); // trig 10ms HIGH
   digitalWrite(trigPin, LOW);
  
-  // echo calculation
+  // Echo calculation
   duration = pulseIn(echoPin, HIGH);
-  // distance proportional to the output duration
-  distance = duration*340/(2*10000);  // sound speed
+  // Distance proportional to the output duration
+  distance = duration*340/(2*10000);  // Sound speed
   
-  // out of range
+  // Out of range
   if ( distance <= 0){ 
 	Serial.println("Out of range");
   }
@@ -116,7 +114,7 @@ float getUS() {
   }
 }
 
-// default steady position
+// Default steady position
 void resetPos(){
   for (int i=0; i<6; i+=2)
   {
@@ -128,7 +126,7 @@ void resetPos(){
 
 }
 
-// not used - kept for future additions
+// Not used - kept for future additions
 void nicePose(){
 	 for (int i=1; i<6; i+=2)
   {
@@ -138,7 +136,7 @@ void nicePose(){
   }
 }
 
-// not used - kept for future additions
+// Not used - kept for future additions
 void fwdPose(){
   for (int i=1; i<6; i+=2)
   {
@@ -148,8 +146,7 @@ void fwdPose(){
   }
 }
 
-
-// rotates on itself
+// Rotates on itself
 // few degrees per Rotate() call
 void rotate(){
    Serial.write("Rotate"); // avoids obstacle, rotates on itself 
@@ -207,7 +204,7 @@ void rotate(){
 }
 
 
-// move straight forward
+// Move straight forward
 void moveFwd(){
 	for (int i=0; i<6; i+=2)
   {
@@ -253,29 +250,29 @@ void moveFwd(){
   
 }
 
-// used in 'moveFwd' as pose - legs slight rotation
+// Used in 'moveFwd' as pose - legs slight rotation
 void dir1(){
-  // full
+  // Full
    for (int i=0; i<6; i+=1)
 	{
 	  mot[i][0].write(60);
 	}
-   // 'special'
+   // 'Special'
    for (int i=0; i<6; i+=2)
 	{
 	  mot[i][0].write(120);
 	}
 }
 
-// used in 'moveFwd' as pose
+// Used in 'moveFwd' as pose
 // legs slight rotation in opposite direction relative to dir1()
 void dir2(){
-  // full opposite
+  // Full opposite
    for (int i=0; i<6; i+=1)
 	{
 	  mot[i][0].write(120);
 	}
-   // 'special' opposite
+   // 'Special' opposite
    for (int i=0; i<6; i+=2)
 	{
 	  mot[i][0].write(60);
